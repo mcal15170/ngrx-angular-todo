@@ -12,7 +12,7 @@ export enum TodoTypes {
 export class AddToDOAction implements Action {
     readonly type = TodoTypes.ADD_TODO
 
-    constructor(public payload: ITodo) { }
+    constructor(public payload:any) { }
 }
 
 export class UpdateToDoAction implements Action {

@@ -2,31 +2,26 @@
 <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
     <div class="form-row">
         <div class="col-auto">
-            <input type="text" formControlName="description" class="form-control" placeholder="Description"
-                [ngClass]="{ 'is-invalid': submitted && f.description.errors }" />
+            <input type="text" formControlName="description" class="form-control" placeholder="Description" [ngClass]="{ 'is-invalid': submitted && f.description.errors }" />
             <div *ngIf="submitted && f.description.errors" class="invalid-feedback">
                 <div *ngIf="f.description.errors.required">Description is required</div>
             </div>
         </div>
         <div class="col-auto">
-            <input type="text" formControlName="responsible" class="form-control" placeholder="Responsible"
-                [ngClass]="{ 'is-invalid': submitted && f.responsible.errors }" />
+            <input type="text" formControlName="responsible" class="form-control" placeholder="Responsible" [ngClass]="{ 'is-invalid': submitted && f.responsible.errors }" />
             <div *ngIf="submitted && f.responsible.errors" class="invalid-feedback">
                 <div *ngIf="f.responsible.errors.required">responsible is required</div>
             </div>
         </div>
         <div class="col-auto">
-            <select class="form-control" formControlName="priority"
-                [ngClass]="{ 'is-invalid': submitted && f.priority.errors }">
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
+
+            <select class="form-control" formControlName="priority" [ngClass]="{ 'is-invalid': submitted && f.priority.errors }">
+                <option *ngFor="let item of selectList$"  [value]="item.id">{{item.lable}}</option>
+               
             </select>
             <div *ngIf="submitted && f.priority.errors" class="invalid-feedback">
                 <div *ngIf="f.priority.errors.required">priority is required</div>
             </div>
-            <input type="hidden" formControlName="isCompleted" />
-            <input type="hidden" formControlName="id" />
         </div>
         <div class="col-auto">
             <button type="submit" class="btn btn-primary">{{actionButton}}</button>
@@ -34,47 +29,60 @@
     </div>
 </form>
 <br />
+
 <h6>Todos List:</h6>
-<div *ngIf="(todo | async)?.length!=0">
-    <table class="table">
-        <thead class="thead-inverse">
-            <tr>
-                <th>#</th>
-                <th>Todo Description</th>
-                <th>Responsible</th>
-                <th>Status</th>
-                <th>Priority</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let t of todoList | async">
-                <td><span>{{ t.id }}</span></td>
-                <td><span>{{ t.description }}</span></td>
-                <td><span>{{ t.responsible }}</span></td>
-                <td><span>
-                        <div *ngIf="t.isCompleted; then thenBlock else elseBlock"></div>
-                        <ng-template #thenBlock><i class="far fa-thumbs-up green-text"></i></ng-template>
-                        <ng-template #elseBlock><i class="far fa-thumbs-down red-text"></i></ng-template>
-                    </span></td>
-                <td>
-                    <span *ngIf="t.priority == 'low'" class="badge badge-success">Low</span>
-                    <span *ngIf="t.priority == 'medium'" class="badge badge-warning">Medium</span>
-                    <span *ngIf="t.priority == 'high'" class="badge badge-danger">High</span>
-                </td>
-                <td>
-                    <button (click)="removeTodo(t.id)" class="btn btn-danger"><i class="fas fa-trash-alt pr-2"
-                            aria-hidden="true"></i>Delete</button>
-                    <button (click)="updateTodo(t)" class="btn btn-primary"><i class="fas fa-pen-alt pr-2"
-                            aria-hidden="true"></i>Update</button>
-                    <button (click)="toggleTodo(t.id)" class="btn btn-info">
-                        <i class="fas fa-thumbs-up mr-2" aria-hidden="true"></i>
-                        <i class="fas fa-thumbs-down" aria-hidden="true"></i>
-                    </button>
 
-                </td>
+<table class="table">
+    <thead class="thead-inverse">
+        <tr>
+            <th>#</th>
+            <th>Todo Description</th>
+            <th>Responsible</th>
+            <th>Priority</th>
+            <th>Complite Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let t of todoList$">
+            <td><span>{{ t.id }}</span></td>
+            <td><span>{{ t.description }}</span></td>
+            <td><span>{{ t.responsible }}</span></td>
+            <td>
+                <span *ngIf="t.priority == 'low'" class="badge badge-success">Low</span>
+                <span *ngIf="t.priority == 'medium'" class="badge badge-warning">Medium</span>
+                <span *ngIf="t.priority == 'high'" class="badge badge-danger">High</span>
+            </td>
 
-            </tr>
-        </tbody>
-    </table>
-</div>
+            <td><span>
+                    <div *ngIf="t.isCompleted; then thenBlock else elseBlock"></div>
+                    <ng-template #thenBlock><i class="far fa-thumbs-up green-text"></i></ng-template>
+                    <ng-template #elseBlock><i class="far fa-thumbs-down red-text"></i></ng-template>
+                </span></td>
+
+            <td>
+                <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+
+                <mat-menu #menu="matMenu">
+                    <button (click)="removeTodo(t.id)" mat-menu-item>
+                       <mat-icon>delete_forever</mat-icon>
+                            Delete</button>
+                    <button mat-menu-item (click)="updateTodo(t)">
+                        <mat-icon>edit</mat-icon>
+                        Update</button>
+                    <button mat-menu-item (click)="toggleTodo(t.id)">
+                        <mat-icon>thumbs_up_down</mat-icon>
+                           Status
+                        </button>
+
+
+                </mat-menu>
+            </td>
+        </tr>
+        <tr *ngIf="!todoList$.length" colspan="6">
+            <p class="mt-3 text-danger">Record Not Found!</p>
+        </tr>
+    </tbody>
+</table>

@@ -1,5 +1,8 @@
-import { ITodo } from './todo.model';
+import { ITodo, ISELECT } from './todo.model';
 
 export interface AppState {
-    readonly todo: Array<ITodo>
+    readonly todos: ITodo[];
+    readonly lastUpdate: Date;
+    readonly selectList: ISELECT[];
+
 }

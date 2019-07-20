@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { ITodo } from 'src/app/store/models/todo.model';
-import { AppState } from 'src/app/store/models/app-state.model';
+import { ITodo, ISELECT } from 'src/app/store/models/todo.model';
 import { RemoveToDoAction, AddToDOAction, ToggleToDoAction, UpdateToDoAction } from 'src/app/store/actions/todo.action';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ToastrManager } from 'ng6-toastr-notifications';
+import { AppState } from 'src/app/store/models/app-state.model';
 
 @Component({
   selector: 'app-todo-list',
@@ -16,13 +15,20 @@ export class TodoListComponent implements OnInit {
   registerForm: FormGroup;
   submitted = false;
   actionButton;
-  todoList: Observable<Array<ITodo>>;
+  todoList$: Observable<ITodo[]>;
+  selectList$: Observable<ISELECT[]>;
 
-  constructor(private store: Store<AppState>, private formBuilder: FormBuilder,public toastr: ToastrManager) { }
+  constructor(public store: Store<AppState>, private formBuilder: FormBuilder) { }
 
 
   ngOnInit() {
-    this.todoList = this.store.select(store => store.todo);
+    this.store.select(state => state).subscribe((data: any) => {
+      this.todoList$ = data.todo.todos;
+      this.selectList$ = data.todo.selectList;
+      console.log(this.selectList$);
+    });
+
+
 
     this.registerForm = this.formBuilder.group({
       id: [],
@@ -37,7 +43,6 @@ export class TodoListComponent implements OnInit {
 
   removeTodo(id: number) {
     this.store.dispatch(new RemoveToDoAction(id));
-
   }
 
   toggleTodo(id: number) {
@@ -51,7 +56,7 @@ export class TodoListComponent implements OnInit {
       responsible: data.responsible,
       priority: data.priority,
       isCompleted: data.isCompleted
-    })
+    });
     this.actionButton = 'Update'
   }
 
@@ -67,14 +72,14 @@ export class TodoListComponent implements OnInit {
 
     if (this.registerForm.value.id) {
       this.store.dispatch(new UpdateToDoAction(this.registerForm.value));
-      
+
     } else {
       this.store.dispatch(new AddToDOAction(this.registerForm.value));
 
+
     }
-    this.toastr.successToastr('Save Data Succesfully.', 'Success!',{ position:'top-right',toastTimeout:1000});
     this.registerForm.reset();
     this.submitted = false;
-    this.actionButton='Create'
+    this.actionButton = 'Create'
   }
 }

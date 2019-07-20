@@ -5,3 +5,9 @@ export interface ITodo {
     priority: string;
     isCompleted: boolean;
 }
+
+export interface ISELECT{
+    id:string;
+    lable:string;
+}
+

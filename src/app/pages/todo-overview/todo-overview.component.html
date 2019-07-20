@@ -1,3 +1,12 @@
-<p class="text-right"><span class="badge badge-danger"></span></p>
-<button class="btn btn-danger" (click)="clearTodos()">Delete All</button>
-<br /><br />
+<div class="row mb-3">
+    <div class="col-md-8">
+        <button class="btn btn-primary" (click)="clearTodos()">Delete All</button>
+    </div>
+    <div class="col-md-2">
+        <mat-icon>thumb_up</mat-icon>{{complete}}&nbsp;
+        <mat-icon>thumb_down</mat-icon>{{unComplete}}
+    </div>
+    <div class="col-md-2">
+        <p class="col-md-12"><span class="badge badge-secondary">Last Update: <div> {{lastUpdate|date:"MM/dd/yyyy HH:mm:ss"}} </div> </span></p>
+    </div>
+</div>

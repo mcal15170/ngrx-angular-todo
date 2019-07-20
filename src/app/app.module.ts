@@ -8,7 +8,12 @@ import { todoReducer } from './store/reducers/todo.reducer';
 import { TodoListComponent } from './pages/todo-list/todo-list.component';
 import { TodoOverviewComponent } from './pages/todo-overview/todo-overview.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ToastrModule } from 'ng6-toastr-notifications';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -18,12 +23,21 @@ import { ToastrModule } from 'ng6-toastr-notifications';
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
+    MatMenuModule,
+    MatIconModule,
+    MatButtonModule,
+    MatSelectModule,
     ReactiveFormsModule,
     StoreModule.forRoot({
       todo: todoReducer
     }),
-    BrowserAnimationsModule,
-    ToastrModule.forRoot()
+
+    StoreDevtoolsModule.instrument({
+      maxAge: 25, // Retains last 25 states
+      logOnly: environment.production, // Restrict extension to log-only mode
+    }),
+
   ],
   providers: [],
   bootstrap: [AppComponent]
