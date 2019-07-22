@@ -12,8 +12,11 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
+import { SelectService } from './pages/select.service';
+import { HttpClientModule } from '@angular/common/http'
 
 @NgModule({
   declarations: [
@@ -26,9 +29,11 @@ import { environment } from '../environments/environment';
     BrowserAnimationsModule,
     MatMenuModule,
     MatIconModule,
+    MatCheckboxModule,
     MatButtonModule,
     MatSelectModule,
     ReactiveFormsModule,
+    HttpClientModule,
     StoreModule.forRoot({
       todo: todoReducer
     }),
@@ -39,7 +44,7 @@ import { environment } from '../environments/environment';
     }),
 
   ],
-  providers: [],
+  providers: [SelectService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

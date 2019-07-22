@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { ITodo, ISELECT } from 'src/app/store/models/todo.model';
-import { RemoveToDoAction, AddToDOAction, ToggleToDoAction, UpdateToDoAction } from 'src/app/store/actions/todo.action';
+import { RemoveToDoAction, AddToDOAction, ToggleToDoAction, UpdateToDoAction, AddSelectData, RemoveAllToDOAction } from 'src/app/store/actions/todo.action';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AppState } from 'src/app/store/models/app-state.model';
+import { SelectService } from '../select.service';
 
 @Component({
   selector: 'app-todo-list',
@@ -17,16 +18,21 @@ export class TodoListComponent implements OnInit {
   actionButton;
   todoList$: Observable<ITodo[]>;
   selectList$: Observable<ISELECT[]>;
+  AllDeleteId = [];
 
-  constructor(public store: Store<AppState>, private formBuilder: FormBuilder) { }
+  constructor(public store: Store<AppState>, private formBuilder: FormBuilder, private testService: SelectService) { }
 
 
   ngOnInit() {
+    this.testService.getCollection().subscribe((res: any) => {
+      this.store.dispatch(new AddSelectData(res));
+    })
+
     this.store.select(state => state).subscribe((data: any) => {
       this.todoList$ = data.todo.todos;
       this.selectList$ = data.todo.selectList;
-      console.log(this.selectList$);
     });
+
 
 
 
@@ -81,5 +87,30 @@ export class TodoListComponent implements OnInit {
     this.registerForm.reset();
     this.submitted = false;
     this.actionButton = 'Create'
+  }
+
+  onChange(event, id) {
+
+    if (event.checked) {
+      this.AllDeleteId.push(id);
+
+    } else {
+      for (var i = 0; i < this.AllDeleteId.length; i++) {
+        if (this.AllDeleteId[i] === id) {
+          this.AllDeleteId.splice(i, 1);
+        }
+      }
+    }
+
+    console.log(this.AllDeleteId);
+
+
+  }
+
+  updateDeleteStatus(){
+    if(this.AllDeleteId.length > 0 ){
+      this.store.dispatch(new RemoveAllToDOAction(this.AllDeleteId));
+      this.AllDeleteId=[];
+    }
   }
 }

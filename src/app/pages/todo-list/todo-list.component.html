@@ -30,11 +30,12 @@
 </form>
 <br />
 
-<h6>Todos List:</h6>
+<h6>Todos List |<button mat-icon-button (click)="updateDeleteStatus()"><mat-icon>delete_sweep</mat-icon></button></h6>
 
 <table class="table">
     <thead class="thead-inverse">
         <tr>
+            <th>Delete</th>
             <th>#</th>
             <th>Todo Description</th>
             <th>Responsible</th>
@@ -45,6 +46,7 @@
     </thead>
     <tbody>
         <tr *ngFor="let t of todoList$">
+            <td><span><mat-checkbox (change)="onChange($event,t.id)"></mat-checkbox></span></td>
             <td><span>{{ t.id }}</span></td>
             <td><span>{{ t.description }}</span></td>
             <td><span>{{ t.responsible }}</span></td>

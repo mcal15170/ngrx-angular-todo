@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { ITodo } from '../models/todo.model';
+import { ITodo, ISELECT } from '../models/todo.model';
 
 export enum TodoTypes {
     ADD_TODO = 'ADD_TODO',
@@ -7,12 +7,18 @@ export enum TodoTypes {
     TOGGLE_TODO = 'TOGGLE_TODO',
     REMOVE_TODO = 'REMOVE_TODO',
     REMOVE_ALL_TODOS = 'REMOVE_ALL_TODOS'
+
+
+}
+
+export enum SelectType {
+    ADD_SELECT_DATA = 'ADD_SELECT_DATA'
 }
 
 export class AddToDOAction implements Action {
     readonly type = TodoTypes.ADD_TODO
 
-    constructor(public payload:any) { }
+    constructor(public payload: any) { }
 }
 
 export class UpdateToDoAction implements Action {
@@ -35,6 +41,13 @@ export class RemoveToDoAction implements Action {
 
 export class RemoveAllToDOAction implements Action {
     readonly type = TodoTypes.REMOVE_ALL_TODOS
+
+    constructor(public payload: any) { }
 }
 
-export type TodoAction = AddToDOAction | ToggleToDoAction | RemoveToDoAction | RemoveAllToDOAction | UpdateToDoAction;
+export class AddSelectData implements Action {
+    readonly type = SelectType.ADD_SELECT_DATA
+    constructor(public payload: ISELECT[]) { }
+}
+
+export type TodoAction = AddToDOAction | ToggleToDoAction | RemoveToDoAction | RemoveAllToDOAction | UpdateToDoAction | AddSelectData;
