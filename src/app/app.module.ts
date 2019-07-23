@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { StoreModule } from '@ngrx/store';
+import { FormsModule } from '@angular/forms';
 import { todoReducer } from './store/reducers/todo.reducer';
 import { TodoListComponent } from './pages/todo-list/todo-list.component';
 import { TodoOverviewComponent } from './pages/todo-overview/todo-overview.component';
@@ -16,7 +17,9 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { SelectService } from './pages/select.service';
-import { HttpClientModule } from '@angular/common/http'
+import {MatRadioModule} from '@angular/material/radio';
+import { HttpClientModule } from '@angular/common/http';
+import {MatToolbarModule} from '@angular/material/toolbar';
 
 @NgModule({
   declarations: [
@@ -28,11 +31,14 @@ import { HttpClientModule } from '@angular/common/http'
     BrowserModule,
     BrowserAnimationsModule,
     MatMenuModule,
+    FormsModule,
     MatIconModule,
     MatCheckboxModule,
+    MatRadioModule,
     MatButtonModule,
     MatSelectModule,
     ReactiveFormsModule,
+    MatToolbarModule,
     HttpClientModule,
     StoreModule.forRoot({
       todo: todoReducer

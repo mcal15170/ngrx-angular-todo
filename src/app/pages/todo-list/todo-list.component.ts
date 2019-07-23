@@ -19,6 +19,17 @@ export class TodoListComponent implements OnInit {
   todoList$: Observable<ITodo[]>;
   selectList$: Observable<ISELECT[]>;
   AllDeleteId = [];
+  onActionStatus: boolean = false;
+  inlineEdit: boolean = false;
+  currentEdit: number = null;
+  edt_desc: string;
+  edt_resp: string;
+  edt_prio: string;
+  edt_status: boolean;
+  inlineEditData: ITodo;
+  mashDeletStatus: boolean = false;
+  allCheckBox: boolean = false;
+  mainCheckBox: boolean = false;
 
   constructor(public store: Store<AppState>, private formBuilder: FormBuilder, private testService: SelectService) { }
 
@@ -43,6 +54,8 @@ export class TodoListComponent implements OnInit {
       priority: ['', Validators.required],
       isCompleted: [false]
     });
+
+
     this.actionButton = 'Create';
   }
 
@@ -89,6 +102,10 @@ export class TodoListComponent implements OnInit {
     this.actionButton = 'Create'
   }
 
+  onSubmitInlineEdit() {
+
+  }
+
   onChange(event, id) {
 
     if (event.checked) {
@@ -101,16 +118,63 @@ export class TodoListComponent implements OnInit {
         }
       }
     }
-
+    this.mashDeletStatus = this.AllDeleteId.length > 0 ? true : false;
     console.log(this.AllDeleteId);
+  }
 
+  checkUncheckAll(event) {
+
+    if (event.checked) {
+      this.allCheckBox = true;
+      this.mashDeletStatus = true;
+      for (var i = 0; i < Object.keys(this.todoList$).length; i++) {
+        this.AllDeleteId.push(this.todoList$[i].id);
+      }
+
+
+    } else {
+      this.allCheckBox = false;
+      this.mashDeletStatus = false;
+      this.AllDeleteId = [];
+    }
+    console.log(this.AllDeleteId);
+  }
+
+  updateDeleteStatus() {
+    if (this.AllDeleteId.length > 0) {
+      this.store.dispatch(new RemoveAllToDOAction(this.AllDeleteId));
+      this.AllDeleteId = [];
+      this.mainCheckBox = false;
+
+    }
+  }
+
+  updateOnActionStatus() {
+    this.onActionStatus = !this.onActionStatus;
+    this.mashDeletStatus = !this.onActionStatus ? false : null;
 
   }
 
-  updateDeleteStatus(){
-    if(this.AllDeleteId.length > 0 ){
-      this.store.dispatch(new RemoveAllToDOAction(this.AllDeleteId));
-      this.AllDeleteId=[];
+  changeInlineEditStatus(data: ITodo) {
+    this.inlineEdit = !this.inlineEdit;
+    this.currentEdit = data.id;
+    this.edt_desc = data.description;
+    this.edt_resp = data.responsible
+    this.edt_prio = data.priority;
+    this.edt_status = data.isCompleted;
+  }
+
+  saveInlineData(data: ITodo) {
+    this.inlineEdit = !this.inlineEdit;
+    this.inlineEditData = {
+      id: this.currentEdit,
+      description: this.edt_desc.length > 0 ? this.edt_desc : data.description,
+      responsible: this.edt_resp.length > 0 ? this.edt_resp : data.responsible,
+      priority: this.edt_prio,
+      isCompleted: this.edt_status
     }
+    this.store.dispatch(new UpdateToDoAction(this.inlineEditData));
+
+
   }
 }

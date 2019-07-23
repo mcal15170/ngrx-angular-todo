@@ -1,5 +1,5 @@
 <h6>Create Todo:</h6>
-<form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="mb-2">
     <div class="form-row">
         <div class="col-auto">
             <input type="text" formControlName="description" class="form-control" placeholder="Description" [ngClass]="{ 'is-invalid': submitted && f.description.errors }" />
@@ -17,7 +17,6 @@
 
             <select class="form-control" formControlName="priority" [ngClass]="{ 'is-invalid': submitted && f.priority.errors }">
                 <option *ngFor="let item of selectList$"  [value]="item.id">{{item.lable}}</option>
-               
             </select>
             <div *ngIf="submitted && f.priority.errors" class="invalid-feedback">
                 <div *ngIf="f.priority.errors.required">priority is required</div>
@@ -28,14 +27,24 @@
         </div>
     </div>
 </form>
-<br />
-
-<h6>Todos List |<button mat-icon-button (click)="updateDeleteStatus()"><mat-icon>delete_sweep</mat-icon></button></h6>
-
+<mat-toolbar color="primary">
+    <mat-toolbar-row>
+        <span>Todo List</span>
+        <span class="example-spacer"></span>
+        <button [ngStyle]="{display: mashDeletStatus?'block':'none'}" mat-icon-button (click)="updateDeleteStatus()"><mat-icon class="example-icon" aria-hidden="false" aria-label="Example user verified icon">delete_sweep</mat-icon></button>
+        <mat-icon class="example-icon" aria-hidden="false" aria-label="Example delete icon">list_alt</mat-icon>&nbsp;&nbsp;{{todoList$.length}}
+    </mat-toolbar-row>
+</mat-toolbar>
 <table class="table">
     <thead class="thead-inverse">
         <tr>
-            <th>Delete</th>
+            <th *ngIf="todoList$.length">
+                <mat-icon class="inlineAction" (click)="updateOnActionStatus()">{{onActionStatus?'arrow_left':'arrow_right'}}</mat-icon>
+            </th>
+            <th *ngIf="onActionStatus && todoList$.length">Delete<br/> &nbsp;
+                <mat-checkbox [checked]="mainCheckBox" (change)="checkUncheckAll($event)"></mat-checkbox>
+            </th>
+            <th *ngIf="onActionStatus && todoList$.length">Inline Edit</th>
             <th>#</th>
             <th>Todo Description</th>
             <th>Responsible</th>
@@ -45,22 +54,76 @@
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let t of todoList$">
-            <td><span><mat-checkbox (change)="onChange($event,t.id)"></mat-checkbox></span></td>
+        <tr *ngFor="let t of todoList$" id="tr{{t.id}}">
+            <td></td>
+            <td *ngIf="onActionStatus"><span><mat-checkbox [checked]="allCheckBox" (change)="onChange($event,t.id)"></mat-checkbox></span></td>
+            <!-- <td *ngIf="onActionStatus"><span><input type="checkbox" name="rowSelectCheckBox" (onchange)="onChange($event,t.id)"/></span></td> -->
+
+            <td *ngIf="onActionStatus">
+                <span>
+                <ng-template [ngIf]="inlineEdit && t.id===currentEdit">
+<mat-icon (click)="changeInlineEditStatus(t)" class="inlineEdit">highlight_off</mat-icon>
+                <mat-icon (click)="saveInlineData(t)"  *ngIf="inlineEdit" class="inlineEdit">check_circle_outline</mat-icon>
+                </ng-template>
+                <ng-template [ngIf]="!inlineEdit || t.id !== currentEdit">
+                        <mat-icon (click)="changeInlineEditStatus(t)" class="inlineEdit">border_color</mat-icon>
+                    </ng-template>
+            </span>
+            </td>
+
             <td><span>{{ t.id }}</span></td>
-            <td><span>{{ t.description }}</span></td>
-            <td><span>{{ t.responsible }}</span></td>
+            <td><span>
+                    <div class="row">
+                            <div class="col-md-12">{{ t.description }}</div>
+                            <div class="col-md-12" *ngIf="inlineEdit && t.id===currentEdit">
+                                    <input type="text"  class="form-control" [(ngModel)]="edt_desc"  />
+                            </div>
+                        </div>
+            </span>
+            </td>
+            <td><span>
+                <div class="row">
+                    <div class="col-md-12">{{ t.responsible }}</div>
+                    <div class="col-md-12" *ngIf="inlineEdit && t.id===currentEdit">
+                            <input type="text" [value]="t.responsible"  class="form-control"  [(ngModel)]="edt_resp"  />
+                    </div>
+                </div>
+                
+            </span></td>
             <td>
-                <span *ngIf="t.priority == 'low'" class="badge badge-success">Low</span>
-                <span *ngIf="t.priority == 'medium'" class="badge badge-warning">Medium</span>
-                <span *ngIf="t.priority == 'high'" class="badge badge-danger">High</span>
+
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <span *ngIf="t.priority == 'low'" class="badge badge-success">Low</span>
+                        <span *ngIf="t.priority == 'medium'" class="badge badge-warning">Medium</span>
+                        <span *ngIf="t.priority == 'high'" class="badge badge-danger">High</span>
+                    </div>
+                    <div class="col-md-12" *ngIf="inlineEdit && t.id===currentEdit">
+                        <select class="form-control" [(ngModel)]="edt_prio">
+                                    <option *ngFor="let item of selectList$" [selected]="item.id===t.priority" [value]="item.id">{{item.lable}}</option>
+                                </select>
+                    </div>
+                </div>
             </td>
 
             <td><span>
+                    <div class="row">
+                            <div class="col-md-12">
                     <div *ngIf="t.isCompleted; then thenBlock else elseBlock"></div>
                     <ng-template #thenBlock><i class="far fa-thumbs-up green-text"></i></ng-template>
                     <ng-template #elseBlock><i class="far fa-thumbs-down red-text"></i></ng-template>
-                </span></td>
+
+                    </div>
+                        <div class="col-md-12" *ngIf="inlineEdit && t.id===currentEdit">
+                                <mat-radio-group  [(ngModel)]="edt_status">
+                                            <mat-radio-button   [value]="true"><mat-icon>thumb_up</mat-icon></mat-radio-button><br/>
+                                            <mat-radio-button [value]="false"><mat-icon>thumb_down</mat-icon></mat-radio-button>
+                                      </mat-radio-group>
+                        </div>
+                    </div>
+                </span>
+            </td>
 
             <td>
                 <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
@@ -68,18 +131,16 @@
               </button>
 
                 <mat-menu #menu="matMenu">
-                    <button (click)="removeTodo(t.id)" mat-menu-item>
+                    <button (click)="removeTodo(t.id)" mat-menu-item [disabled]="inlineEdit">
                        <mat-icon>delete_forever</mat-icon>
                             Delete</button>
-                    <button mat-menu-item (click)="updateTodo(t)">
+                    <button mat-menu-item (click)="updateTodo(t)" [disabled]="inlineEdit">
                         <mat-icon>edit</mat-icon>
                         Update</button>
-                    <button mat-menu-item (click)="toggleTodo(t.id)">
+                    <button mat-menu-item (click)="toggleTodo(t.id)" [disabled]="inlineEdit">
                         <mat-icon>thumbs_up_down</mat-icon>
                            Status
                         </button>
-
-
                 </mat-menu>
             </td>
         </tr>

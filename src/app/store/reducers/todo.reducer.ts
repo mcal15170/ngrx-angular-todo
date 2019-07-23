@@ -10,7 +10,6 @@ const initialState: AppState = {
             priority: "medium",
             isCompleted: false
         }
-        
     ],
     lastUpdate: new Date(),
     selectList: [],
@@ -36,6 +35,7 @@ export function todoReducer(state: any = initialState, action: TodoAction) {
             state.todos[index].description = action.payload.description;
             state.todos[index].responsible = action.payload.responsible;
             state.todos[index].priority = action.payload.priority;
+            state.todos[index].isCompleted = action.payload.isCompleted;
             return {
                 todos: [...state.todos],
                 lastUpdate: new Date(),
@@ -61,7 +61,6 @@ export function todoReducer(state: any = initialState, action: TodoAction) {
             }
 
         case TodoTypes.REMOVE_ALL_TODOS:
-            console.log(action.payload);
             return {
                 todos: [...state.todos.filter(item => item.id !== action.payload.find(data => data == item.id))],
                 lastUpdate: new Date(),

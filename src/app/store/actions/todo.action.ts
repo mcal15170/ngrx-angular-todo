@@ -42,7 +42,7 @@ export class RemoveToDoAction implements Action {
 export class RemoveAllToDOAction implements Action {
     readonly type = TodoTypes.REMOVE_ALL_TODOS
 
-    constructor(public payload: any) { }
+    constructor(public payload: any[]) { }
 }
 
 export class AddSelectData implements Action {
