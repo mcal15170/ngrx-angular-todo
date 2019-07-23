@@ -5,5 +5,6 @@ export interface AppState {
     readonly lastUpdate: Date;
     readonly selectList: ISELECT[];
     readonly lastId: number;
+    readonly colorName: string;
 
 }

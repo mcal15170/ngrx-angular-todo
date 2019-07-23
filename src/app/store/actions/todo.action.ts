@@ -15,6 +15,10 @@ export enum SelectType {
     ADD_SELECT_DATA = 'ADD_SELECT_DATA'
 }
 
+export enum ThemeType {
+    ADD_THEME_COLOR = 'ADD_THEME_COLOR'
+}
+
 export class AddToDOAction implements Action {
     readonly type = TodoTypes.ADD_TODO
 
@@ -50,4 +54,9 @@ export class AddSelectData implements Action {
     constructor(public payload: ISELECT[]) { }
 }
 
-export type TodoAction = AddToDOAction | ToggleToDoAction | RemoveToDoAction | RemoveAllToDOAction | UpdateToDoAction | AddSelectData;
+export class AddThemeColor implements Action {
+    readonly type = ThemeType.ADD_THEME_COLOR
+    constructor(public payload: string) { }
+}
+
+export type TodoAction = AddToDOAction | ToggleToDoAction | RemoveToDoAction | RemoveAllToDOAction | UpdateToDoAction | AddSelectData | AddThemeColor;

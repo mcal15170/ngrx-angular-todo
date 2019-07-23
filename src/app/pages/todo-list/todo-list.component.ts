@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { ITodo, ISELECT } from 'src/app/store/models/todo.model';
-import { RemoveToDoAction, AddToDOAction, ToggleToDoAction, UpdateToDoAction, AddSelectData, RemoveAllToDOAction } from 'src/app/store/actions/todo.action';
+import { RemoveToDoAction, AddToDOAction, ToggleToDoAction, UpdateToDoAction, AddSelectData, RemoveAllToDOAction, AddThemeColor } from 'src/app/store/actions/todo.action';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AppState } from 'src/app/store/models/app-state.model';
 import { SelectService } from '../select.service';
@@ -30,6 +30,7 @@ export class TodoListComponent implements OnInit {
   mashDeletStatus: boolean = false;
   allCheckBox: boolean = false;
   mainCheckBox: boolean = false;
+  themeColor: string;
 
   constructor(public store: Store<AppState>, private formBuilder: FormBuilder, private testService: SelectService) { }
 
@@ -42,6 +43,7 @@ export class TodoListComponent implements OnInit {
     this.store.select(state => state).subscribe((data: any) => {
       this.todoList$ = data.todo.todos;
       this.selectList$ = data.todo.selectList;
+      this.themeColor = data.todo.colorName;
     });
 
 
@@ -98,6 +100,9 @@ export class TodoListComponent implements OnInit {
 
     }
     this.registerForm.reset();
+    this._snackBar.open(message, action, {
+      duration: 2000,
+    });
     this.submitted = false;
     this.actionButton = 'Create'
   }
@@ -174,7 +179,9 @@ export class TodoListComponent implements OnInit {
       isCompleted: this.edt_status
     }
     this.store.dispatch(new UpdateToDoAction(this.inlineEditData));
+  }
 
-
+  changeThemeColor(color: string) {
+    this.store.dispatch(new AddThemeColor(color));
   }
 }

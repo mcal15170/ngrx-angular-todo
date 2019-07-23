@@ -27,11 +27,30 @@
         </div>
     </div>
 </form>
-<mat-toolbar color="primary">
+<mat-toolbar [color]="themeColor">
     <mat-toolbar-row>
         <span>Todo List</span>
         <span class="example-spacer"></span>
         <button [ngStyle]="{display: mashDeletStatus?'block':'none'}" mat-icon-button (click)="updateDeleteStatus()"><mat-icon class="example-icon" aria-hidden="false" aria-label="Example user verified icon">delete_sweep</mat-icon></button>
+        <button mat-icon-button [matMenuTriggerFor]="menu"><mat-icon class="example-icon" aria-hidden="false" aria-label="Example user verified icon">brush</mat-icon></button>
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="changeThemeColor('primary')">
+                  <mat-icon style="background-color: #3f51b5;color: #3f51b5" ></mat-icon>
+                  <span>primary</span>
+                </button>
+            <button mat-menu-item (click)="changeThemeColor('accent')">
+                  <mat-icon  style="background-color: #ff4081;color:#ff4081 " >check_box_outline_blank</mat-icon>
+                  <span>accent</span>
+                </button>
+            <button mat-menu-item (click)="changeThemeColor('warn')">
+                  <mat-icon #f44336 style="background-color: #f44336;color: #f44336" >check_box_outline_blank</mat-icon>
+                  <span>warn</span>
+                </button>
+            <button mat-menu-item (click)="changeThemeColor('default')">
+                        <mat-icon #f44336 style="background-color: #f5f5f5;color: #f5f5f5" >check_box_outline_blank</mat-icon>
+                        <span>default</span>
+                      </button>
+        </mat-menu>
         <mat-icon class="example-icon" aria-hidden="false" aria-label="Example delete icon">list_alt</mat-icon>&nbsp;&nbsp;{{todoList$.length}}
     </mat-toolbar-row>
 </mat-toolbar>

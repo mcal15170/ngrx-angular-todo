@@ -1,5 +1,5 @@
 import { AppState } from '../models/app-state.model';
-import { TodoTypes, SelectType, TodoAction } from '../actions/todo.action';
+import { TodoTypes, SelectType, ThemeType, TodoAction } from '../actions/todo.action';
 
 const initialState: AppState = {
     todos: [
@@ -13,7 +13,8 @@ const initialState: AppState = {
     ],
     lastUpdate: new Date(),
     selectList: [],
-    lastId: 1
+    lastId: 1,
+    colorName: 'accent'
 }
 
 
@@ -27,7 +28,8 @@ export function todoReducer(state: any = initialState, action: TodoAction) {
                 todos: [...state.todos, action.payload],
                 lastUpdate: new Date(),
                 selectList: [...state.selectList],
-                lastId: action.payload.id
+                lastId: action.payload.id,
+                colorName: state.colorName
             }
         case TodoTypes.UPDATE_TODO:
             var todo = state.todos.find(t => t.id === action.payload.id);
@@ -40,7 +42,8 @@ export function todoReducer(state: any = initialState, action: TodoAction) {
                 todos: [...state.todos],
                 lastUpdate: new Date(),
                 selectList: [...state.selectList],
-                lastId: state.lastId
+                lastId: state.lastId,
+                colorName: state.colorName
             }
         case TodoTypes.TOGGLE_TODO:
             var todo = state.todos.find(t => t.id === action.payload);
@@ -50,14 +53,16 @@ export function todoReducer(state: any = initialState, action: TodoAction) {
                 todos: [...state.todos],
                 lastUpdate: new Date(),
                 selectList: [...state.selectList],
-                lastId: state.lastId
+                lastId: state.lastId,
+                colorName: state.colorName
             }
         case TodoTypes.REMOVE_TODO:
             return {
                 todos: [...state.todos.filter(item => item.id !== action.payload)],
                 lastUpdate: new Date(),
                 selectList: [...state.selectList],
-                lastId: state.lastId
+                lastId: state.lastId,
+                colorName: state.colorName
             }
 
         case TodoTypes.REMOVE_ALL_TODOS:
@@ -65,7 +70,8 @@ export function todoReducer(state: any = initialState, action: TodoAction) {
                 todos: [...state.todos.filter(item => item.id !== action.payload.find(data => data == item.id))],
                 lastUpdate: new Date(),
                 selectList: [...state.selectList],
-                lastId: state.lastId
+                lastId: state.lastId,
+                colorName: state.colorName
             }
 
 
@@ -74,7 +80,17 @@ export function todoReducer(state: any = initialState, action: TodoAction) {
                 todos: [...state.todos],
                 lastUpdate: new Date(),
                 selectList: [...state.selectList, ...action.payload],
-                lastId: state.lastId
+                lastId: state.lastId,
+                colorName: state.colorName
+            }
+
+        case ThemeType.ADD_THEME_COLOR:
+            return {
+                todos: [...state.todos],
+                lastUpdate: new Date(),
+                selectList: [...state.selectList],
+                lastId: state.lastId,
+                colorName: action.payload
             }
 
         default:
